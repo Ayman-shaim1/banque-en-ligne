@@ -26,7 +26,7 @@ public class TestOperationDao {
         for (Operation std : opts) {
             System.out.println(std.toString());
         }
-
+        dao.retrait(100,3);
         System.out.println("Hello world");
     }
 }

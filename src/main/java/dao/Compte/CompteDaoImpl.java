@@ -108,7 +108,7 @@ public class CompteDaoImpl implements ICompteDao{
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        return 0;
+        return -1;
     }
 
     @Override

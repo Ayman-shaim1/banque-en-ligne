@@ -25,7 +25,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Retrait</h5>
                     <p class="card-text">Effectuer une opération de retrait.</p>
-                    <a href="/banque_war_exploded/views/retrait.jsp" class="btn btn-primary">Accéder</a>
+                    <a href="/banque_war_exploded/retrait" class="btn btn-primary">Accéder</a>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Virement</h5>
                     <p class="card-text">Transférer des fonds vers un autre compte.</p>
-                    <a href="/banque_war_exploded/views/virement.jsp" class="btn btn-primary">Accéder</a>
+                    <a href="/banque_war_exploded/virement" class="btn btn-primary">Accéder</a>
                 </div>
             </div>
         </div>

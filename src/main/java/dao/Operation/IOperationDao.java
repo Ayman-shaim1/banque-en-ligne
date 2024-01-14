@@ -12,5 +12,7 @@ public interface IOperationDao {
     public void updateOperation(Operation Operation);
     public  List<Operation> getOperationByCompte(int numCompte);
     public  List<Operation> getOperationsByClient(String cin);
+    public  void retrait(double solde,int numCompte);
+
 
 }

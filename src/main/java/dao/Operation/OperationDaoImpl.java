@@ -2,11 +2,9 @@ package dao.Operation;
 
 import dao.MyConnection;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OperationDaoImpl implements IOperationDao{
@@ -45,7 +43,7 @@ public class OperationDaoImpl implements IOperationDao{
             Class.forName(MyConnection.driver);
             con= DriverManager.getConnection(MyConnection.url, MyConnection.user, MyConnection.password);
 
-            PreparedStatement ps=con.prepareStatement("select * from OPERATION where numCompte=?");
+            PreparedStatement ps=con.prepareStatement("select * from OPERATION where numCompte=? order by dateop desc");
             ps.setInt(1, num);
             ResultSet rs = ps.executeQuery();
 
@@ -73,7 +71,7 @@ public class OperationDaoImpl implements IOperationDao{
         try {
             Class.forName(MyConnection.driver);
             con= DriverManager.getConnection(MyConnection.url, MyConnection.user, MyConnection.password);
-            PreparedStatement ps=con.prepareStatement("select * from operation");
+            PreparedStatement ps=con.prepareStatement("select * from operation order by dateop desc");
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
 
@@ -140,7 +138,7 @@ public class OperationDaoImpl implements IOperationDao{
         try {
             Class.forName(MyConnection.driver);
             con= DriverManager.getConnection(MyConnection.url, MyConnection.user, MyConnection.password);
-            PreparedStatement ps=con.prepareStatement("SELECT * FROM operation op inner JOIN compte cpt on op.compte =cpt.numcompte WHERE cpt.cinClient = ?");
+            PreparedStatement ps=con.prepareStatement("SELECT * FROM operation op inner JOIN compte cpt on op.compte =cpt.numcompte WHERE cpt.cinClient = ? order by dateop desc");
             ps.setString(1,cin);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
@@ -161,5 +159,62 @@ public class OperationDaoImpl implements IOperationDao{
             e1.printStackTrace();
         }
         return opts;
+    }
+
+    @Override
+    public void retrait(double solde, int numCompte) {
+        try {
+            Class.forName(MyConnection.driver);
+            con = DriverManager.getConnection(MyConnection.url, MyConnection.user, MyConnection.password);
+
+            // Set autocommit to false to start a transaction
+            con.setAutoCommit(false);
+
+            // Update Compte table
+            PreparedStatement ps1 = con.prepareStatement("update Compte set solde = solde - ? where numCompte = ?");
+            ps1.setDouble(1, solde + 5);
+            ps1.setInt(2, numCompte);
+            ps1.executeUpdate();
+            ps1.close();
+
+            // Insert into operation table
+            PreparedStatement ps = con.prepareStatement("insert into operation(dateOp, type, compte, commission) values(?,?,?,?)");
+            java.util.Date utilDate = new Date();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            ps.setDate(1, sqlDate);
+            ps.setString(2, "retrait");
+            ps.setInt(3, numCompte);
+            ps.setDouble(4, 5);
+            ps.executeUpdate();
+            ps.close();
+
+            // Commit the transaction
+            con.commit();
+
+        } catch (SQLException e) {
+            // Rollback the transaction in case of an exception
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Set autocommit back to true to end the transaction
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }
