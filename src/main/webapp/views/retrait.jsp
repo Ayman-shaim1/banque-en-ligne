@@ -19,7 +19,7 @@
 
 <div class="container">
         <div class="d-flex justify-content-center">
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-12">
                 <label>choisire un compte</label>
                 <select class="form-control"  onchange="getComptes(event)">
                     <option value="">--- veuillez choisire un compte ---</option>
@@ -29,9 +29,8 @@
                 </select>
             </div>
         </div>
-
         <div class="d-flex justify-content-center mt-2" >
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-12">
                  <div class="alert alert-info d-none" id="alert">
                      <div class="d-flex justify-content-center">
                          <h3><i class="fa-solid fa-wallet"></i></h3>
@@ -46,7 +45,7 @@
             </div>
         </div>
         <div class="d-flex justify-content-center mt-5">
-            <div class="col-md-4">
+            <div class="col-md-4 col-sm-12">
                 <form id="frmRetrait">
                     <label>Montant du retrait</label>
                     <input  disabled id="txtmt" class="form-control" type="number" placeholder="veuillez saisire le montant du retrait"/>
@@ -122,7 +121,9 @@
                     soldeEl.innerText = data.solde;
 
                     txtmt.removeAttribute("disabled");
-                    btnrt.removeAttribute("disabled")
+                    btnrt.removeAttribute("disabled");
+                    txtmt.value = "";
+
                 })
                 .catch(error => {
                     console.error("Error calling servlet:", error);
@@ -134,6 +135,7 @@
             soldeEl.innerText =0;
             txtmt.setAttribute("disabled",true);
             btnrt.setAttribute("disabled",true);
+            txtmt.value = "";
         }
 
 

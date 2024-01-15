@@ -217,4 +217,65 @@ public class OperationDaoImpl implements IOperationDao{
         }
 
     }
+
+    @Override
+    public void virement(double solde, int numCompteExp, int numCompteDest) {
+        try {
+            Class.forName(MyConnection.driver);
+            con = DriverManager.getConnection(MyConnection.url, MyConnection.user, MyConnection.password);
+
+            con.setAutoCommit(false);
+
+            // Update Compte table
+            PreparedStatement ps1 = con.prepareStatement("update Compte set solde = solde - ? where numCompte = ?");
+            ps1.setDouble(1, solde + (solde * 5 / 100));
+            ps1.setInt(2, numCompteExp);
+            ps1.executeUpdate();
+            ps1.close();
+
+            PreparedStatement ps2 = con.prepareStatement("update Compte set solde = solde + ? where numCompte = ?");
+            ps2.setDouble(1, solde);
+            ps2.setInt(2, numCompteDest);
+            ps2.executeUpdate();
+            ps2.close();
+
+            // Insert into operation table
+            PreparedStatement ps = con.prepareStatement("insert into operation(dateOp, type, compte, commission) values(?,?,?,?)");
+            java.util.Date utilDate = new Date();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            ps.setDate(1, sqlDate);
+            ps.setString(2, "versement");
+            ps.setInt(3, numCompteExp);
+            ps.setDouble(4, (solde * 5 / 100));
+            ps.executeUpdate();
+            ps.close();
+
+            // Commit the transaction
+            con.commit();
+
+        } catch (SQLException e) {
+            // Rollback the transaction in case of an exception
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Set autocommit back to true to end the transaction
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

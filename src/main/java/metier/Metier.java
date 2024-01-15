@@ -10,10 +10,8 @@ public class Metier {
     public double totalSoldeComptes(String cin){
         double total = 0;
         List<Compte> lstcpt =  new CompteDaoImpl().getAllComptesByClient(cin);
-        for(Compte compte:lstcpt) {
-            System.out.println(compte);
+        for(Compte compte:lstcpt)
             total += new CompteDaoImpl().soldeCompte(compte.getNumCompte());
-        }
         return total;
     }
 

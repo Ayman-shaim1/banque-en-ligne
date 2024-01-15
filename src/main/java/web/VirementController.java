@@ -23,6 +23,34 @@ public class VirementController extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            if(request.getParameter("numCompteExp") != null && request.getParameter("numCompteDest") != null &&  request.getParameter("solde") != null ){
+                int numCompteExp =  Integer.parseInt(request.getParameter("numCompteExp"));
+                int numCompteDest =  Integer.parseInt(request.getParameter("numCompteDest"));
 
+                double solde = Double.parseDouble(request.getParameter("solde") );
+                compteDao = new CompteDaoImpl();
+                if(compteDao.soldeCompte(numCompteExp) >= solde){
+                    operationDao = new OperationDaoImpl();
+                    operationDao.virement(solde,numCompteExp,numCompteDest);
+                    response.getWriter().write("virement effectue avec success !");
+                }
+                else{
+                    response.setStatus(400);
+                    response.getWriter().write("le montant que vous avez saisi doit être inférieur au solde de ce compte.");
+                }
+
+            }
+            else{
+                response.setStatus(400);
+                response.getWriter().write("numero de compte expéditeur, destinataire et solde obligatoire !");
+
+            }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid numCompte parameter");
+        }
     }
+
+
 }

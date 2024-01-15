@@ -13,6 +13,7 @@ public interface IOperationDao {
     public  List<Operation> getOperationByCompte(int numCompte);
     public  List<Operation> getOperationsByClient(String cin);
     public  void retrait(double solde,int numCompte);
+    public  void virement(double solde,int numCompteExp,int numCompteDest);
 
 
 }
